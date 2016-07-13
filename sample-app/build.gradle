@@ -1,0 +1,72 @@
+/**
+ * Copyright 2016 MattaKis Consulting Kft.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/** **********************/
+/** Build Script Setup **/
+/** **********************/
+
+buildscript {
+    // Add central and local Maven repos
+    repositories {
+        maven {
+            url uri(System.getenv("INTEL_MULTI_OS_ENGINE_HOME") + "/gradle")
+        }
+        mavenCentral()
+    }
+    dependencies {
+        // MOE plugin
+        classpath 'com.intel.gradle:moeGradlePlugin:1.1.+'
+    }
+}
+
+/** *****************/
+/** Project Setup **/
+/** *****************/
+
+// Apply plugins
+apply plugin: 'moe'
+
+// Set source and target to Java 8
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+// Set maven repository
+repositories {
+    maven {
+        url uri(System.getenv("INTEL_MULTI_OS_ENGINE_HOME") + "/gradle")
+    }
+    mavenCentral()
+}
+
+// Exclude all files from Gradle's test runner
+test { exclude '**' }
+
+// Setup MOE
+moe {
+    xcode.mainTarget = 'sample'
+    xcode.testTarget = 'sample-Test'
+    xcode.packageName = 'com.migeran.sample'
+    xcode.launchScreenFilePath = 'src/main/resources/LaunchScreen.xib'
+    xcode.bundleID = 'migeran.sample'
+
+}
+
+// Set dependencies
+dependencies {
+    // Compile with 'jar' files in the project's 'lib' directory
+    compile fileTree(dir: 'lib', include: '*.jar')
+    compile project(':rxmoe')
+}
